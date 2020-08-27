@@ -15,6 +15,9 @@ print(dat_train)
 print(dat_test)
 dataset = pd.concat([dat_train, dat_test])
 
+# Check missings
+print(dataset.isna().sum()) # Take care of Age and Cabin
+
 # Feature engineering 1: Honorifics/title indicators
 dataset['Titles'] = dataset['Name'].str.extract(r'\, ((\w+\s?)+)\.')[0]
 print(dataset)
@@ -28,5 +31,22 @@ dataset['FormalTitles'] = dataset['the Countess'] + dataset['Lady'] + dataset['S
 dataset = dataset.drop(['Mr', 'Miss', 'Mrs', 'Col', 'Major', 'Mlle', 'Ms', 'the Countess','Lady', 'Mme', 'Dona', 'Capt', 'Sir', 'Don', 'Jonkheer'], axis = 1) 
 print(dataset)
 
+# Feature engineering 2: Family
+dataset['FamilySize'] = dataset['SibSp'] + dataset ['Parch'] + 1
+dataset['Family'] = dataset['FamilySize'] > 1
+dataset['Family'] = dataset['Family'].astype(int)
+
+# Feature engineering 3: Port
+dataset = pd.concat([dataset, pd.get_dummies(dataset['Embarked'])], axis=1)
+
+# Feature engineering 3: Pclass
+dataset = pd.concat([dataset, pd.get_dummies(dataset['Pclass'])], axis=1)
+
+# Feature engineering 4: Ticket
+
+# Feature engineering : Age
+print(dataset.Age.isna().sum())
+
+
 # Export cleaned dataset
-dataset.to_csv (r'data/cleaned/titanic.csv', index = False, header=True)
+#dataset.to_csv (r'data/cleaned/titanic.csv', index = False, header=True)
